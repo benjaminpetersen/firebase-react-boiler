@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createEditor, Descendant, Editor, Transforms } from "slate";
 import { Editable, Slate, withReact } from "slate-react";
 import { withYjs, YjsEditor } from "@slate-yjs/core";
 import * as Y from "yjs";
-import { WebsocketProvider } from 'y-websocket'
+import { WebsocketProvider } from "y-websocket";
 import { roomName } from "./refactor";
-
+import { CodeElement, DefaultElement } from "./editor-components";
 
 const initialValue: Descendant[] = [
   {
@@ -27,11 +27,15 @@ export const CollaborativeEditor = () => {
 
     // Set up your Yjs provider. This line of code is different for each provider.
 
-    const yProvider = new WebsocketProvider('ws://localhost:1234', roomName, yDoc)
+    const yProvider = new WebsocketProvider(
+      `ws://localhost:${import.meta.env.VITE_APP_DOC_CHANGE_WS_PORT}`,
+      roomName,
+      yDoc,
+    );
 
-    yProvider.on('status', event => {
-      console.log(event.status) // logs "connected" or "disconnected"
-    })
+    yProvider.on("status", (event) => {
+      console.log(event.status); // logs "connected" or "disconnected"
+    });
     // To set this up you pass shared doc to the setup. so it has th emethods, and network input should drill data into it.
     // I ne
     // const yProvider = new YjsProvider(/* ... */); // man this does not makes sense.
@@ -42,8 +46,8 @@ export const CollaborativeEditor = () => {
 
     return () => {
       yDoc?.destroy();
-        yProvider?.off("sync", setConnected);
-        yProvider?.destroy();
+      yProvider?.off("sync", setConnected);
+      yProvider?.destroy();
     };
   }, []);
 
@@ -77,10 +81,21 @@ const SlateEditor = ({ sharedType }) => {
     YjsEditor.connect(editor);
     return () => YjsEditor.disconnect(editor);
   }, [editor]);
+  const renderElement = useCallback((props: any) => {
+    switch (props.element.type) {
+      case "code":
+        return <CodeElement {...props} />;
+      default:
+        return <DefaultElement {...props} />;
+    }
+  }, []);
 
   return (
-    <Slate editor={editor} initialValue={initialValue}>
-      <Editable />
-    </Slate>
+    <div>
+      <h1></h1>
+      <Slate editor={editor} initialValue={initialValue}>
+        <Editable renderElement={renderElement} />
+      </Slate>
+    </div>
   );
 };
