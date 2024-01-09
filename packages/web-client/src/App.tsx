@@ -1,35 +1,63 @@
-import { BrowserRouter as Router } from "react-router-dom";
+import { Editable, Slate, withReact } from "slate-react";
 import "./App.css";
-import { IfAuthed } from "./containers/IfAuthed";
-import { HeaderSidebar } from "./layout/HeaderSidebar";
-import { AppRoutes } from "./router";
-import { theme1 } from "./theme";
-import { ThemeProvider } from "@mui/material";
-import { DevelopmentContainer } from "./development-only/DevelopmentContainer";
-import { GlobalWatchers } from "./containers/GlobalWatchers";
-import { IfCompany } from "./containers/IfCompany";
-import { AuthProvider } from "./containers/AuthProvider";
+import { useCallback, useState } from "react";
+import { Descendant, Editor, Element, Transforms, createEditor } from "slate";
+import { CollaborativeEditor } from "./DocsCollab";
+const initialValue: Descendant[] = [
+  {
+    type: "paragraph",
+    children: [{ text: "A line of text in a paragraph." }],
+  },
+  { type: "code", children: [{ text: "<OK></OK>" }] },
+];
 
-function App() {
-  const theme = theme1;
+const CodeElement = (props: any) => {
   return (
-    <AuthProvider>
-      <DevelopmentContainer />
-      <ThemeProvider theme={theme}>
-        <Router>
-          <GlobalWatchers>
-            <IfAuthed>
-              <IfCompany>
-                <HeaderSidebar>
-                  <AppRoutes />
-                </HeaderSidebar>
-              </IfCompany>
-            </IfAuthed>
-          </GlobalWatchers>
-        </Router>
-      </ThemeProvider>
-    </AuthProvider>
+    <pre {...props.attributes}>
+      <code>{props.children}</code>
+    </pre>
   );
-}
+};
+const DefaultElement = (props) => <p {...props.attributes}>{props.children}</p>;
+
+const App = () => {
+  const [editor] = useState(() => withReact(createEditor()));
+  // Render the Slate context.
+  const renderElement = useCallback((props: any) => {
+    switch (props.element.type) {
+      case "code":
+        return <CodeElement {...props} />;
+      default:
+        return <DefaultElement {...props} />;
+    }
+  }, []);
+  if (Math.random()) return <CollaborativeEditor />;
+  return (
+    <div>
+      <Slate editor={editor} initialValue={initialValue}>
+        <Editable
+          onKeyDown={(event) => {
+            if (event.key === "`" && event.ctrlKey) {
+              // Prevent the "`" from being inserted by default.
+              event.preventDefault();
+              // Otherwise, set the currently selected blocks type to "code".
+              Transforms.setNodes(
+                editor,
+                { type: "code" },
+                {
+                  match: (n) =>
+                    Element.isElement(n) && Editor.isBlock(editor, n),
+                }
+              );
+            }
+          }}
+          renderElement={renderElement}
+          // const renderLeaf -- simple span like fnality
+          // renderLeaf={}
+        />
+      </Slate>
+    </div>
+  );
+};
 
 export default App;
