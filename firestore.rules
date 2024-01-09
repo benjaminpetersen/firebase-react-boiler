@@ -1,0 +1,58 @@
+rules_version = '2';
+// See https://firebase.google.com/docs/firestore/security/rules-conditions for help
+// Read access:
+// unique-names: companyUsers
+// fileStatusi: companyUsers
+// users: companyUsers
+// invites: invitee
+// companies: companyUsers (and cloud functions)
+
+// Write access with broader security implications:
+// users permissions - admins.
+
+
+service cloud.firestore {
+  match /databases/{database}/documents/{env} {
+    match /invites/invites/{authId}/{document=**} {
+      // Cloud functions create when companies invite a user, and delete when companies delete a user.
+      allow read, write:
+        if request.auth.uid == authId
+    }
+    match /companies/companies/{companyId} {
+      function isCompanyUser(){
+        return exists(/databases/$(database)/documents/$(env)/companies/companies/$(companyId)/company-user-permissions/$(request.auth.uid))
+      }
+
+      function isCompanyAdmin(){
+        return get(/databases/$(database)/documents/$(env)/companies/companies/$(companyId)/company-user-permissions/$(request.auth.uid)).data.admin == true
+      }
+
+      // Company Document Rules! An accompanying function is fetching a company name for invites.
+      allow read: if isCompanyUser();
+      allow update: if isCompanyAdmin();
+      allow create: if request.auth != null;
+
+      match /company-user-permissions/{docId} {
+        allow read: if isCompanyUser();
+        allow update: if isCompanyAdmin();
+      }
+      // Users - See and update any of the display info of other users.
+      // This particular collection is for display purposes only, it shouldn't have any meaningful effect on other parts of the app.
+      match /company-users/{document=**} {
+        allow read,update: if isCompanyUser();
+      }
+
+      // File statusi - If you're in the company
+      match /file-statusi/{document=**} {
+        allow read: if isCompanyUser();
+        // Maintained by cloud functions.
+        allow write: if false;
+      }
+
+      // A unique name function is used. Hash the name and lookup the number of times it's been 
+      match /unique-names/{document=**} {
+        allow read, write: if isCompanyUser();
+      }
+    }
+  }
+}

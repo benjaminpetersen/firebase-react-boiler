@@ -1,0 +1,16 @@
+rules_version = '2';
+
+// Craft rules based on data in your Firestore database
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{env}/companies/{companyId} {
+      function isCompanyUser(){
+        return firestore.get(/databases/(default)/documents/$(env)/companies/companies/$(companyId)/company-user-permissions/$(request.auth.uid)).data != null;
+      }
+
+      function isCompanyAdmin(){
+        return firestore.get(/databases/(default)/documents/$(env)/companies/companies/$(companyId)/company-user-permissions/$(request.auth.uid)).data.admin==true;
+      }
+    }
+  }
+}

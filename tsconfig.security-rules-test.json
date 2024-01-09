@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "security-rules-test/build"
+  },
+  "include": ["security-rules-test/src"]
+}

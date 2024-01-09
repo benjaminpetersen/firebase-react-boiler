@@ -1,0 +1,61 @@
+{
+  "functions": [
+    {
+      "source": ".",
+      "runtime": "nodejs18",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "*.log",
+        "./packages/web-client",
+        "./packages/remote-data",
+        ".vscode",
+        "dev-seed",
+        "python-functions",
+        "security-rules-test"
+      ]
+    },
+    {
+      "source": "python-functions",
+      "codebase": "python-functions",
+      "runtime": "python311",
+      "ignore": ["venv", ".git", "firebase-debug.log", "firebase-debug.*.log"]
+    }
+  ],
+  "hosting": {
+    "public": "packages/web-client/build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true,
+    "storage": {
+      "port": 9199
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

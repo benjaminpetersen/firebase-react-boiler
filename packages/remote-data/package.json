@@ -1,0 +1,22 @@
+{
+  "name": "@chewing-bytes/remote-data",
+  "version": "1.0.2",
+  "main": "build/index.js",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "yarn tsc",
+    "watch:dev": "yarn build --watch"
+  },
+  "dependencies": {
+    "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.0.0"
+  }
+}

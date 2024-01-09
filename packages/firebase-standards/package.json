@@ -1,0 +1,37 @@
+{
+  "name": "@chewing-bytes/firebase-standards",
+  "version": "3.0.0",
+  "main": "build/cjs/index.js",
+  "module": "build/esm/index.js",
+  "types": "build/types/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "directories": {
+    "build": "build"
+  },
+  "exports": {
+    "types": "./build/types/index.d.ts",
+    "require": "./build/cjs/index.js",
+    "import": "./build/esm/index.js",
+    "default": "./build/cjs/index.js"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "rimraf build",
+    "build": "yarn tsc -b tsconfig.esm.json tsconfig.cjs.json tsconfig.types.json",
+    "build:dev": "yarn tsc -b tsconfig.esm.json tsconfig.cjs.json tsconfig.types.json",
+    "check": "yarn tsc --noEmit",
+    "prepublish": "yarn run build",
+    "watch:dev": "yarn build --watch "
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.202",
+    "lodash": "^4.17.21",
+    "typescript": "5.1.6",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  }
+}
