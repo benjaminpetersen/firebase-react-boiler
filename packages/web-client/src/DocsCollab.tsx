@@ -3,6 +3,9 @@ import { createEditor, Descendant, Editor, Transforms } from "slate";
 import { Editable, Slate, withReact } from "slate-react";
 import { withYjs, YjsEditor } from "@slate-yjs/core";
 import * as Y from "yjs";
+import { WebsocketProvider } from 'y-websocket'
+import { roomName } from "./refactor";
+
 
 const initialValue: Descendant[] = [
   {
@@ -13,11 +16,9 @@ const initialValue: Descendant[] = [
 ];
 
 export const CollaborativeEditor = () => {
-  //   const [connected, setConnected] = useState(false);
-  const connected = Math.random();
+  const [connected, setConnected] = useState(false);
   const [sharedType, setSharedType] = useState<any>();
-  //   const [provider, setProvider] = useState();
-  const provider = Math.random();
+  const [provider, setProvider] = useState<WebsocketProvider>();
 
   // Connect to your Yjs provider and document
   useEffect(() => {
@@ -25,16 +26,24 @@ export const CollaborativeEditor = () => {
     const sharedDoc = yDoc.get("slate", Y.XmlText);
 
     // Set up your Yjs provider. This line of code is different for each provider.
-    // const yProvider = new YjsProvider(/* ... */);
 
-    // yProvider.on("sync", setConnected);
+    const yProvider = new WebsocketProvider('ws://localhost:1234', roomName, yDoc)
+
+    yProvider.on('status', event => {
+      console.log(event.status) // logs "connected" or "disconnected"
+    })
+    // To set this up you pass shared doc to the setup. so it has th emethods, and network input should drill data into it.
+    // I ne
+    // const yProvider = new YjsProvider(/* ... */); // man this does not makes sense.
+
+    yProvider.on("sync", setConnected);
     setSharedType(sharedDoc);
-    // setProvider(yProvider);
+    setProvider(yProvider);
 
     return () => {
       yDoc?.destroy();
-      //   yProvider?.off("sync", setConnected);
-      //   yProvider?.destroy();
+        yProvider?.off("sync", setConnected);
+        yProvider?.destroy();
     };
   }, []);
 

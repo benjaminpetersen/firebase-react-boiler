@@ -27,5 +27,3 @@ yarn-error.log*
 firebase-debug.log
 firebase-export*
 ui-debug.log
-.yarn/releases/yarn-4.0.2.cjs
-.yarn/install-state.gz

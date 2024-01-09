@@ -41,8 +41,8 @@ export const docPath = (collectionPath: string, id: string) =>
 
 export const collectionLocations = (env: string) =>
   collectionsMap({
-    uniqueNames: (ctx: CompanyId) =>
-      join(env, companies, ctx.companyId, collections.uniqueNames),
+    uniqueNames: () =>
+      join(env, collections.uniqueNames),
     fileStatusi: ({ companyId }: { companyId: string }) =>
       join(env, companies, companyId, collections.fileStatusi),
     companyUsers: ({ companyId }: CompanyId) =>
@@ -68,10 +68,7 @@ export const documentLocations = (env: string) => {
       id: string,
     ) => docPath(colPaths.fileStatusi(args), id),
     invites: (id: string) => docPath(colPaths.invites(), id),
-    uniqueNames: (
-      args: Parameters<(typeof colPaths)["uniqueNames"]>[0],
-      id: string,
-    ) => docPath(colPaths.uniqueNames(args), id),
+    uniqueNames: (id: string) => docPath(colPaths.uniqueNames(), id),
     companyUsers: (
       args: Parameters<(typeof colPaths)["companyUsers"]>[0],
       id: string,

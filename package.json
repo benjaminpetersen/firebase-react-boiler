@@ -1,5 +1,5 @@
 {
-  "name": "ft",
+  "name": "asdf",
   "version": "1.0.0",
   "private": true,
   "main": "packages/functions/lib/src/index.js",
@@ -46,6 +46,5 @@
     "parallelshell": "3.0.1",
     "prettier": "^3.0.0",
     "ts-jest": "^29.1.1"
-  },
-  "packageManager": "yarn@4.0.2"
+  }
 }

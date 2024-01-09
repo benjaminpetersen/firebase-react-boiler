@@ -1,0 +1,15 @@
+{
+  "name": "@chewing-bytes/change-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "PORT=1234 YPERSISTENCE=./local-db node ./node_modules/y-websocket/bin/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "y-websocket": "^1.5.1"
+  }
+}
