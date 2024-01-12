@@ -51,6 +51,7 @@ export const CollaborativeEditor = () => {
     };
   }, []);
 
+  // TODO i want to get away from this - ssr / hydrate the values -> connect async
   if (!connected || !sharedType || !provider) {
     return <div>Loading…</div>;
   }
