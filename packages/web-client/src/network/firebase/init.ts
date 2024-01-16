@@ -19,7 +19,6 @@ import {
 } from "@chewing-bytes/firebase-standards";
 import { omit } from "lodash-es";
 import { logError } from "./db";
-import { devLogger } from "../../utils";
 import { companyId } from "../../refactor";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -58,8 +57,6 @@ export const firebaseFunction = async <Endpoint extends BackendFunctions>(
   const json = _json as HttpsCallableResult<
     FetchResponse<FunctionResponseData[Endpoint]>
   >;
-  const messages = json.data.feedback || [];
-  devLogger(`Launched ${url}:`, messages);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return json.data.data;

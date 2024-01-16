@@ -1,1 +1,0 @@
-export const devLogger: typeof console.log = (...args) => console.log("[DEV]", ...args);

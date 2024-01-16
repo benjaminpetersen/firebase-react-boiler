@@ -1,8 +1,8 @@
 import "./App.css";
-import { CollaborativeEditor } from "./DocsCollab";
+import { SlateEditor } from "./DocsCollab";
 
 const App = () => {
-  return <CollaborativeEditor />;
+  return <SlateEditor />;
 };
 
 export default App;
