@@ -4,6 +4,9 @@ import { Editable, useSlate, Slate } from "slate-react";
 import { Editor, Transforms, Descendant, Element as SlateElement } from "slate";
 import { RichComponents } from "./editor/rich-components/RichBlocks";
 import { LeafComponents } from "./editor/rich-components/Leafs";
+import { filterExpansions, useTextExpansions } from "./editor/expansions";
+import { useContextMenu } from "./containers/contextMenu";
+import { ExpansionsContextMenu } from "./editor/components/ExpansionsContextMenu";
 
 // import { withHistory } from "slate-history";
 
@@ -82,7 +85,8 @@ const RichEditor = ({ sharedType, editor }) => {
     [],
   );
   const renderLeaf = useCallback((props) => <LeafComponents {...props} />, []);
-
+  const { expansions, maxLen } = useTextExpansions();
+  const setContextMenu = useContextMenu()[1];
   return (
     <div className="debug">
       <Slate editor={editor} initialValue={initialValue}>
@@ -108,6 +112,27 @@ const RichEditor = ({ sharedType, editor }) => {
           spellCheck
           autoFocus
           onKeyDown={(event) => {
+            const { anchorNode, anchorOffset } = window.getSelection();
+            const searchSpace =
+              (anchorNode instanceof Text ? anchorNode.data : "").slice(
+                anchorOffset - maxLen,
+                anchorOffset,
+              ) + event.key;
+
+            // setContextMenu?;
+            const exp = filterExpansions({ expansions }, searchSpace);
+            setContextMenu({
+              anchorNode: anchorNode,
+              offset: { x: "0", y: "0" },
+              menu: (
+                <ExpansionsContextMenu
+                  expansions={exp}
+                  onSelect={(exp) => {
+                    console.log("SELECT", exp);
+                  }}
+                />
+              ),
+            });
             for (const hotkey in HOTKEYS) {
               if (isHotkey(hotkey, event as any)) {
                 event.preventDefault();
