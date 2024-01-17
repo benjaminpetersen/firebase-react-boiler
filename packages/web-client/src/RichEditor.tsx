@@ -7,6 +7,7 @@ import { LeafComponents } from "./editor/rich-components/Leafs";
 import { filterExpansions, useTextExpansions } from "./editor/expansions";
 import { useContextMenu } from "./containers/contextMenu";
 import { ExpansionsContextMenu } from "./editor/components/ExpansionsContextMenu";
+import { isMarkActive } from "./editor/editorMethods";
 
 // import { withHistory } from "slate-history";
 
@@ -128,7 +129,7 @@ const RichEditor = ({ sharedType, editor }) => {
                 <ExpansionsContextMenu
                   expansions={exp}
                   onSelect={(exp) => {
-                    console.log("TODO - SELECTED", exp);
+                    exp.replace(editor);
                   }}
                 />
               ),
@@ -205,11 +206,6 @@ const isBlockActive = (editor, format, blockType = "type") => {
   );
 
   return !!match;
-};
-
-const isMarkActive = (editor, format) => {
-  const marks = Editor.marks(editor);
-  return marks ? marks[format] === true : false;
 };
 
 const BlockButton = ({ format, icon }) => {

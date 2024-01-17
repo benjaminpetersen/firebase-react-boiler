@@ -27,3 +27,12 @@ body {
 .underline {
   text-decoration: underline;
 }
+
+.ghost {
+  opacity: 50%;
+}
+
+.tag {
+  background-color: grey;
+  border-radius: 5px;
+}

@@ -15,7 +15,10 @@ export const ExpansionsContextMenu = ({
             onSelect(expansion);
           }}
         >
-          ** {expansion.value} **
+          <span className="tag">{expansion.tag}</span>
+          {expansion.prompt && (
+            <span className="ghost">{expansion.prompt}</span>
+          )}
         </div>
       ))}
     </div>
