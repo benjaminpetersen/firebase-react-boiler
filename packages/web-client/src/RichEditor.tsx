@@ -1,13 +1,19 @@
 import React, { useCallback } from "react";
 import isHotkey from "is-hotkey";
 import { Editable, useSlate, Slate } from "slate-react";
-import { Editor, Transforms, Descendant, Element as SlateElement } from "slate";
+import type { Descendant } from "slate";
 import { RichComponents } from "./editor/rich-components/RichBlocks";
 import { LeafComponents } from "./editor/rich-components/Leafs";
 import { filterExpansions, useTextExpansions } from "./editor/expansions";
 import { useContextMenu } from "./containers/contextMenu";
 import { ExpansionsContextMenu } from "./editor/components/ExpansionsContextMenu";
-import { isMarkActive } from "./editor/editorMethods";
+import {
+  isBlockActive,
+  isMarkActive,
+  toggleBlock,
+  toggleMark,
+} from "./editor/editorMethods";
+import { IconTypes, TEXT_ALIGN_TYPES } from "./editor/editorConstants";
 
 // import { withHistory } from "slate-history";
 
@@ -18,24 +24,6 @@ const HOTKEYS = {
   "mod+`": "code",
   "mod+y": "todo",
 };
-
-const LIST_TYPES = ["numbered-list", "bulleted-list"];
-const TEXT_ALIGN_TYPES = ["left", "center", "right", "justify"];
-
-type IconTypes =
-  | "format_bold"
-  | "format_italic"
-  | "format_underlined"
-  | "code"
-  | "looks_one"
-  | "looks_two"
-  | "format_quote"
-  | "format_list_numbered"
-  | "format_list_bulleted"
-  | "format_align_left"
-  | "format_align_center"
-  | "format_align_right"
-  | "format_align_justify";
 
 const iconTypeToJSX = (t: IconTypes): React.ReactNode => {
   switch (t) {
@@ -115,11 +103,12 @@ const RichEditor = ({ sharedType, editor }) => {
           autoFocus
           onKeyDown={(event) => {
             const { anchorNode, anchorOffset } = window.getSelection();
-            const searchSpace =
-              (anchorNode instanceof Text ? anchorNode.data : "").slice(
-                anchorOffset - maxLen,
-                anchorOffset,
-              ) + event.key;
+            const txt =
+              (anchorNode instanceof Text ? anchorNode.data : "") + event.key;
+            const searchSpace = txt.slice(
+              anchorOffset + 1 - maxLen,
+              anchorOffset + 1,
+            );
 
             const exp = filterExpansions({ expansions }, searchSpace);
             setContextMenu({
@@ -146,66 +135,6 @@ const RichEditor = ({ sharedType, editor }) => {
       </Slate>
     </div>
   );
-};
-
-const toggleBlock = (editor, format) => {
-  const isActive = isBlockActive(
-    editor,
-    format,
-    TEXT_ALIGN_TYPES.includes(format) ? "align" : "type",
-  );
-  const isList = LIST_TYPES.includes(format);
-
-  Transforms.unwrapNodes(editor, {
-    match: (n) =>
-      !Editor.isEditor(n) &&
-      SlateElement.isElement(n) &&
-      LIST_TYPES.includes(n.type) &&
-      !TEXT_ALIGN_TYPES.includes(format),
-    split: true,
-  });
-  let newProperties: Partial<SlateElement>;
-  if (TEXT_ALIGN_TYPES.includes(format)) {
-    newProperties = {
-      align: isActive ? undefined : format,
-    };
-  } else {
-    newProperties = {
-      type: isActive ? "paragraph" : isList ? "list-item" : format,
-    };
-  }
-  Transforms.setNodes<SlateElement>(editor, newProperties);
-
-  if (!isActive && isList) {
-    const block = { type: format, children: [] };
-    Transforms.wrapNodes(editor, block);
-  }
-};
-
-const toggleMark = (editor, format) => {
-  const isActive = isMarkActive(editor, format);
-  if (isActive) {
-    Editor.removeMark(editor, format);
-  } else {
-    Editor.addMark(editor, format, true);
-  }
-};
-
-const isBlockActive = (editor, format, blockType = "type") => {
-  const { selection } = editor;
-  if (!selection) return false;
-
-  const [match] = Array.from(
-    Editor.nodes(editor, {
-      at: Editor.unhangRange(editor, selection),
-      match: (n) =>
-        !Editor.isEditor(n) &&
-        SlateElement.isElement(n) &&
-        n[blockType] === format,
-    }),
-  );
-
-  return !!match;
 };
 
 const BlockButton = ({ format, icon }) => {

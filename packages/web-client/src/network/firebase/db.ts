@@ -9,6 +9,7 @@ import {
 } from "@chewing-bytes/firebase-standards";
 import { appUpdateDoc } from "./api-client";
 import { getCompanyId } from "../../refactor";
+import { logError } from "../../utils";
 
 const env = getEnv();
 export const collectionPaths = collectionLocations(env);
@@ -22,9 +23,7 @@ const docRefFromPath = ({ path }: { path: string }) => doc(firestore, path);
 const getRenameCount = async (str: string): Promise<number> => {
   return runTransaction(firestore, async (t) => {
     const docRef = docRefFromPath({
-      path: docPaths.uniqueNames(
-        sha1(str),
-      ),
+      path: docPaths.uniqueNames(sha1(str)),
     });
     const data = await t.get(docRef)?.then((d) => d.data());
     const count = data?.renameCount || 0;
@@ -33,9 +32,6 @@ const getRenameCount = async (str: string): Promise<number> => {
     return renameCount;
   });
 };
-
-export const logError = (...args: Parameters<typeof console.error>) =>
-  console.error(...args);
 
 const retry = async <RT>(
   fn: () => RT | Promise<RT>,

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { ITextExpansion } from "../expansions";
 
 export const ExpansionsContextMenu = ({
@@ -7,6 +8,20 @@ export const ExpansionsContextMenu = ({
   onSelect: (expansion: ITextExpansion) => void;
   expansions: ITextExpansion[];
 }) => {
+  useEffect(() => {
+    const listener = (ev) => {
+      if (ev.key === "Tab") {
+        ev.preventDefault();
+        const [expansion] = expansions;
+        expansion && onSelect(expansion);
+      }
+    };
+    window.addEventListener("keydown", listener);
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, [expansions, onSelect]);
+
   return (
     <div className="expansions-context-menu">
       {expansions.map((expansion) => (
