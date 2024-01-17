@@ -113,6 +113,8 @@ type CustomElement =
 
 export type CustomText = {
   bold?: boolean;
+  todo?: boolean;
+  todoDone?: boolean;
   italic?: boolean;
   code?: boolean;
   text: string;

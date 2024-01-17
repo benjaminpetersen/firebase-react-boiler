@@ -15,6 +15,7 @@ const HOTKEYS = {
   "mod+i": "italic",
   "mod+u": "underline",
   "mod+`": "code",
+  "mod+y": "todo",
 };
 
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
@@ -108,7 +109,7 @@ const RichEditor = ({ sharedType, editor }) => {
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-          placeholder="Enter some rich text…"
+          placeholder="Enter some text..."
           spellCheck
           autoFocus
           onKeyDown={(event) => {
@@ -119,7 +120,6 @@ const RichEditor = ({ sharedType, editor }) => {
                 anchorOffset,
               ) + event.key;
 
-            // setContextMenu?;
             const exp = filterExpansions({ expansions }, searchSpace);
             setContextMenu({
               anchorNode: anchorNode,
@@ -128,7 +128,7 @@ const RichEditor = ({ sharedType, editor }) => {
                 <ExpansionsContextMenu
                   expansions={exp}
                   onSelect={(exp) => {
-                    console.log("SELECT", exp);
+                    console.log("TODO - SELECTED", exp);
                   }}
                 />
               ),
@@ -183,7 +183,6 @@ const toggleBlock = (editor, format) => {
 
 const toggleMark = (editor, format) => {
   const isActive = isMarkActive(editor, format);
-
   if (isActive) {
     Editor.removeMark(editor, format);
   } else {
@@ -250,36 +249,7 @@ const MarkButton = ({ format, icon }) => {
 const initialValue: Descendant[] = [
   {
     type: "paragraph",
-    children: [
-      { text: "This is editable " },
-      { text: "rich", bold: true },
-      { text: " text, " },
-      { text: "much", italic: true },
-      { text: " better than a " },
-      { text: "<textarea>", code: true },
-      { text: "!" },
-    ],
-  },
-  {
-    type: "paragraph",
-    children: [
-      {
-        text: "Since it's rich text, you can do things like turn a selection of text ",
-      },
-      { text: "bold", bold: true },
-      {
-        text: ", or add a semantically rendered block quote in the middle of the page, like this:",
-      },
-    ],
-  },
-  {
-    type: "block-quote",
-    children: [{ text: "A wise quote." }],
-  },
-  {
-    type: "paragraph",
-    align: "center",
-    children: [{ text: "Try it out for yourself!" }],
+    children: [{ text: "" }],
   },
 ];
 

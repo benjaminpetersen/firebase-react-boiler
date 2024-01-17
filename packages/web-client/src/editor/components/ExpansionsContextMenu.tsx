@@ -7,7 +7,6 @@ export const ExpansionsContextMenu = ({
   onSelect: (expansion: ITextExpansion) => void;
   expansions: ITextExpansion[];
 }) => {
-  console.log("RENDER", expansions);
   return (
     <div className="expansions-context-menu">
       {expansions.map((expansion) => (

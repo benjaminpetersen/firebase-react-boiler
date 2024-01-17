@@ -1,6 +1,17 @@
+const join = (...s: (string | undefined)[]): string =>
+  s.filter(Boolean).join(" ");
 export const LeafComponents = ({ attributes, children, leaf }) => {
   if (leaf.bold) {
     children = <strong>{children}</strong>;
+  }
+
+  if (leaf.todo) {
+    children = (
+      <>
+        <input checked={leaf.todo === "done"} type="checkbox" />
+        {children}
+      </>
+    );
   }
 
   if (leaf.code) {

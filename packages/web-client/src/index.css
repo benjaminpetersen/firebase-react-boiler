@@ -15,3 +15,15 @@ body {
   display: flex;
   direction: column;
 }
+
+.strong {
+  font-weight: bold;
+}
+
+.italics {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}
