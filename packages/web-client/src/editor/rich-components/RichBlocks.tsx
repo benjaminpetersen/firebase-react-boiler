@@ -31,6 +31,12 @@ export const RichComponents = ({ attributes, children, element }) => {
           {children}
         </li>
       );
+    case "check-list-item":
+      return (
+        <li style={{ ...style, listStyleType: "none" }} {...attributes}>
+          <input type="checkbox" checked={element.checked} /> {children}
+        </li>
+      );
     case "numbered-list":
       return (
         <ol style={style} {...attributes}>
