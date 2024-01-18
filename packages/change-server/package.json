@@ -5,11 +5,25 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "PORT=1234 YPERSISTENCE=./local-db node ./node_modules/y-websocket/bin/server.js"
+    "start": "PORT=1234 YPERSISTENCE=./local-db node ./node_modules/y-websocket/bin/server.js",
+    "start:prod": "node dist/index.js",
+    "deploy": "gcloud run deploy notetaker-server --port=8080 --source .",
+    "watch": "tsc --watch",
+    "dev": "nodemon dist/index.js",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "y-websocket": "^1.5.1"
+    "express": "^4.18.2",
+    "express-ws": "^5.0.2",
+    "ws": "^8.16.0",
+    "y-websocket": "^1.5.1",
+    "yjs": "^13.6.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "nodemon": "^3.0.3",
+    "typescript": "^5.3.3"
   }
 }

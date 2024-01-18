@@ -1,9 +1,9 @@
 import { ref, uploadBytesResumable, getBytes } from "firebase/storage";
 import { storage } from "./init";
-import { logError } from "./db";
 import { RemoteData } from "@chewing-bytes/remote-data";
 import { wrap } from "lodash-es";
 import { AppErr } from "./types";
+import { logError } from "../../utils";
 
 const getRef = (...pathParts: string[]) => ref(storage, pathParts.join("/"));
 

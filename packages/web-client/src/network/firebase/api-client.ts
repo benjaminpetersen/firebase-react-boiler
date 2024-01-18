@@ -25,12 +25,13 @@ import {
   collectionTypes,
 } from "@chewing-bytes/firebase-standards";
 import { getEnv } from "./env";
-import { collectionPaths, docPaths, logError } from "./db";
+import { collectionPaths, docPaths } from "./db";
 import React, { useMemo, useState } from "react";
 import { firestore } from "./init";
 import { compact } from "lodash-es";
 import { RD, RemoteData } from "@chewing-bytes/remote-data";
 import { AppErr, WithId } from "./types";
+import { logError } from "../../utils";
 export const appGetDoc = getDocBuilder(async (path: string) => {
   const d = await getDoc(doc(firestore, path));
   const data = d.data();
@@ -210,11 +211,7 @@ export const useLiveDocs = <K extends CollectionKeys>(
             ),
           ]
         : undefined;
-    const fullQuery = countsQuery
-      ? query(
-          ...countsQuery,
-        )
-      : undefined;
+    const fullQuery = countsQuery ? query(...countsQuery) : undefined;
     const unsub = fullQuery
       ? onSnapshot(fullQuery, (snapshot): void => {
           setRD(
@@ -242,11 +239,6 @@ export const useLiveDocs = <K extends CollectionKeys>(
     return () => {
       unsub?.();
     };
-  }, [
-    omitSoftDeletes,
-    latestFirst,
-    path,
-    JSON.stringify(wheres),
-  ]);
+  }, [omitSoftDeletes, latestFirst, path, JSON.stringify(wheres)]);
   return rd;
 };

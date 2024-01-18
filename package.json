@@ -29,7 +29,8 @@
     "start:dev": "parallelshell \"yarn run watch:dev:firebase-standards\" \"yarn run watch:dev:server\" \"yarn run start:dev:server\" \"yarn run start:dev:web-client\"",
     "save:dev": "firebase emulators:export dev-seed",
     "lint-fix": "prettier -w packages/*/** && yarn workspaces foreach --all run eslint --fix .",
-    "deploy:stage": "echo \"Linting...\" && yarn workspaces foreach --all run eslint && echo \"Building\" && yarn workspaces foreach --all run build && echo \"Deploying\" && firebase deploy"
+    "deploy:stage": "echo \"Linting...\" && yarn workspaces foreach --all run eslint && echo \"Building\" && yarn workspaces foreach --all run build && echo \"Deploying\" && firebase deploy",
+    "deploy:channel": "yarn workspace @chewing-bytes/web-client run build && firebase hosting:channel:deploy nt -e 30d"
   },
   "repository": "https://gitlab.com/doc-proc-group/gogo.git",
   "author": "Benjamin Petersen <bpetersen382@gmail.com>",

@@ -24,7 +24,7 @@ const CollaborativeEditor = () => {
     // Set up your Yjs provider. This line of code is different for each provider.
 
     const yProvider = new WebsocketProvider(
-      `ws://localhost:${import.meta.env.VITE_APP_DOC_CHANGE_WS_PORT}`,
+      import.meta.env.VITE_APP_DOC_CHANGE_WS,
       roomName,
       yDoc,
     );

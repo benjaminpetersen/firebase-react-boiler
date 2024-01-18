@@ -18,8 +18,8 @@ import {
   FetchResponse,
 } from "@chewing-bytes/firebase-standards";
 import { omit } from "lodash-es";
-import { logError } from "./db";
 import { companyId } from "../../refactor";
+import { logError } from "../../utils";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
