@@ -10,6 +10,7 @@ local-db*
 /coverage
 
 # production
+web-client-build
 build
 dist
 ./functions/lib

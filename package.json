@@ -1,5 +1,5 @@
 {
-  "name": "asdf",
+  "name": "root",
   "version": "1.0.0",
   "private": true,
   "main": "packages/functions/lib/src/index.js",
@@ -7,7 +7,8 @@
     "packages/remote-data",
     "packages/firebase-standards",
     "packages/web-client",
-    "packages/functions"
+    "packages/functions",
+    "packages/change-server"
   ],
   "dependencies": {
     "@chewing-bytes/firebase-standards": "*",
@@ -47,5 +48,6 @@
     "parallelshell": "3.0.1",
     "prettier": "^3.0.0",
     "ts-jest": "^29.1.1"
-  }
+  },
+  "packageManager": "yarn@4.0.2"
 }
