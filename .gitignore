@@ -16,6 +16,7 @@ dist
 ./functions/lib
 
 # misc
+gap.json
 *.log
 .DS_Store
 .env*

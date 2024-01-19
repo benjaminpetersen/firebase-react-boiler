@@ -1,0 +1,2 @@
+# FIRST: gcloud iam service-accounts create notetaker-server-admin
+gcloud projects add-iam-policy-binding bp-playground --member="serviceAccount:notetaker-server-admin@bp-playground.iam.gserviceaccount.com" --role=roles/storage.objectAdmin
