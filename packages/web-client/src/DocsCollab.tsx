@@ -17,19 +17,14 @@ const CollaborativeEditor = () => {
   const [provider, setProvider] = useState<WebsocketProvider>();
 
   // Connect to your Yjs provider and document
-  useEffect(() => { 
+  useEffect(() => {
     const yDoc = new Y.Doc();
     const sharedDoc = yDoc.get("slate", Y.XmlText);
 
     // Set up your Yjs provider. This line of code is different for each provider.
     const wsUrl = import.meta.env.VITE_APP_DOC_CHANGE_WS;
     console.log(`Connect to `, `${wsUrl}/${roomName}`);
-    const yProvider = new WebsocketProvider(
-      wsUrl,
-      roomName,
-      yDoc,
-    );
-
+    const yProvider = new WebsocketProvider(wsUrl, roomName, yDoc);
     yProvider.on("status", (event) => {
       console.log(event.status); // logs "connected" or "disconnected"
     });
