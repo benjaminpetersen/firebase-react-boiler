@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import isHotkey from "is-hotkey";
 import { Editable, useSlate, Slate } from "slate-react";
 import type { Descendant } from "slate";
@@ -77,9 +77,10 @@ const RichEditor = ({ sharedType, editor }) => {
   const renderLeaf = useCallback((props) => <LeafComponents {...props} />, []);
   const { expansions, maxLen } = useTextExpansions();
   const setContextMenu = useContextMenu()[1];
+  const [value, setValue] = useState(initialValue);
   return (
     <div className="debug">
-      <Slate editor={editor} initialValue={initialValue}>
+      <Slate editor={editor} value={value} onChange={setValue}>
         <div className="toolbar">
           <MarkButton format="bold" icon="format_bold" />
           <MarkButton format="italic" icon="format_italic" />

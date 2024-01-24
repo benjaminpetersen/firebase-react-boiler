@@ -567,15 +567,17 @@ __metadata:
     eslint: "npm:^8.55.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.5"
+    fast-xml-parser: "npm:^4.3.3"
     lodash-es: "npm:^4.17.21"
+    markdown: "npm:^0.5.0"
     postcss: "npm:^8.4.33"
     preact: "npm:^10.19.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     rimraf: "npm:^5.0.5"
     sha1: "npm:^1.1.1"
-    slate: "npm:^0.101.5"
-    slate-react: "npm:^0.101.5"
+    slate: "npm:^0.82.1"
+    slate-react: "npm:^0.83.0"
     tailwind: "npm:^4.0.0"
     tailwindcss: "npm:^3.4.1"
     typescript: "npm:^5.2.2"
@@ -1861,13 +1863,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juggle/resize-observer@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "@juggle/resize-observer@npm:3.4.0"
-  checksum: 12930242357298c6f2ad5d4ec7cf631dfb344ca7c8c830ab7f64e6ac11eb1aae486901d8d880fd08fb1b257800c160a0da3aee1e7ed9adac0ccbb9b7c5d93347
-  languageName: node
-  linkType: hard
-
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -2373,7 +2368,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/is-hotkey@npm:^0.1.8":
+"@types/is-hotkey@npm:^0.1.1":
   version: 0.1.10
   resolution: "@types/is-hotkey@npm:0.1.10"
   checksum: 8ce7cc70a42e4191ba9871905a68fa6586a9da0bfa9940e20fe67e573b34bc79bfc23158e842c7bd3288ebf9c82ee5cce0c7fa1fe8245f6845c2f9b9f3afc536
@@ -2435,7 +2430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.200, @types/lodash@npm:^4.14.202":
+"@types/lodash@npm:^4.14.149, @types/lodash@npm:^4.14.202":
   version: 4.14.202
   resolution: "@types/lodash@npm:4.14.202"
   checksum: 6064d43c8f454170841bd67c8266cc9069d9e570a72ca63f06bceb484cb4a3ee60c9c1f305c1b9e3a87826049fd41124b8ef265c4dd08b00f6766609c7fe9973
@@ -3908,10 +3903,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compute-scroll-into-view@npm:^3.0.2":
-  version: 3.1.0
-  resolution: "compute-scroll-into-view@npm:3.1.0"
-  checksum: bf305c4ece8e5c59ed3f7ed82b6dab5b7487ce26f56a693d903869964712870fccb08fe31d40edcbd600b03c99198f54d443acb315d674bd64fd344410c8672e
+"compute-scroll-into-view@npm:^1.0.20":
+  version: 1.0.20
+  resolution: "compute-scroll-into-view@npm:1.0.20"
+  checksum: 19034322590bfce59cb6939b3603e7aaf6f0d4128b8627bbc136e71c8714905e2f8bf2ba0cb7f153c6e8cdb8ad907ffd6d0188ccc7625dc05790a59ae6a81f01
   languageName: node
   linkType: hard
 
@@ -4250,7 +4245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"direction@npm:^1.0.4":
+"direction@npm:^1.0.3":
   version: 1.0.4
   resolution: "direction@npm:1.0.4"
   bin:
@@ -5170,7 +5165,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.2.2, fast-xml-parser@npm:^4.3.0":
+"fast-xml-parser@npm:^4.2.2, fast-xml-parser@npm:^4.3.0, fast-xml-parser@npm:^4.3.3":
   version: 4.3.3
   resolution: "fast-xml-parser@npm:4.3.3"
   dependencies:
@@ -6162,10 +6157,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^10.0.3":
-  version: 10.0.3
-  resolution: "immer@npm:10.0.3"
-  checksum: 282a4f8479a40f7d12b2b3243c095e3e892bf99058e2ffcdd6b8e9fd143e6a90f2717ab9b6c8b97c927ffb8054465c8f647056f41660dbfd672e240cf1063503
+"immer@npm:^9.0.6":
+  version: 9.0.21
+  resolution: "immer@npm:9.0.21"
+  checksum: 03ea3ed5d4d72e8bd428df4a38ad7e483ea8308e9a113d3b42e0ea2cc0cc38340eb0a6aca69592abbbf047c685dbda04e3d34bf2ff438ab57339ed0a34cc0a05
   languageName: node
   linkType: hard
 
@@ -6355,10 +6350,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-hotkey@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "is-hotkey@npm:0.2.0"
-  checksum: d6589159b641014e26c0999ad261ca191e4cb7192e7db32dc849e69df416699b5ec78ad2a2192c169e7b3838847e48b0e1fc76f89f61946fad3036b23cfcd9b4
+"is-hotkey@npm:^0.1.6":
+  version: 0.1.8
+  resolution: "is-hotkey@npm:0.1.8"
+  checksum: 5aca28f98b9ffff45d9141d26024ffbc33d2d7c8163144d4bd8eccc9330e3299fb7761e962517b7729f6bf9e95f248654aa8b0fccf16478baecddb428a5923fd
   languageName: node
   linkType: hard
 
@@ -7639,7 +7634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.15, lodash@npm:^4.17.21":
+"lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
@@ -7800,6 +7795,17 @@ __metadata:
   bin:
     markdown-it: bin/markdown-it.js
   checksum: 7f97b924e6f90e2c5ccdfb486a19bd7885b938f568a86b527bf6f916a16b01a298e6739f86a99e77acb5e7c020f6c8b34bd726364179b3f820e48b2971a6450c
+  languageName: node
+  linkType: hard
+
+"markdown@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "markdown@npm:0.5.0"
+  dependencies:
+    nopt: "npm:~2.1.1"
+  bin:
+    md2html: ./bin/md2html.js
+  checksum: f9feeb2c3c4ad5a96399d2fe421c2d2cdc5862eaa89b1711864f3c819dc23d41765daae9566ecc38e19f46f3ddaea7a0f2e9e3fd044319554a686206e0de7052
   languageName: node
   linkType: hard
 
@@ -8282,6 +8288,17 @@ __metadata:
   bin:
     nopt: ./bin/nopt.js
   checksum: ddfbd892116a125fd68849ef564dd5b1f0a5ba0dbbf18782e9499e2efad8f4d3790635b47c6b5d3f7e014069e7b3ce5b8112687e9ae093fcd2678188c866fe28
+  languageName: node
+  linkType: hard
+
+"nopt@npm:~2.1.1":
+  version: 2.1.2
+  resolution: "nopt@npm:2.1.2"
+  dependencies:
+    abbrev: "npm:1"
+  bin:
+    nopt: ./bin/nopt.js
+  checksum: 408eac67c6e25a3905db964a185d814f777c9ae2f74ddac635eedd708ac87bd2a55eb7efd27b9c405b213d65474fd19d51ef12d5f324e2b4a7f5b33daa2cf031
   languageName: node
   linkType: hard
 
@@ -9411,12 +9428,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scroll-into-view-if-needed@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "scroll-into-view-if-needed@npm:3.1.0"
+"scroll-into-view-if-needed@npm:^2.2.20":
+  version: 2.2.31
+  resolution: "scroll-into-view-if-needed@npm:2.2.31"
   dependencies:
-    compute-scroll-into-view: "npm:^3.0.2"
-  checksum: 1f46b090e1e04fcfdef1e384f6d7e615f9f84d4176faf4dbba7347cc0a6e491e5d578eaf4dbe9618dd3d8d38efafde58535b3e00f2a21ce4178c14be364850ff
+    compute-scroll-into-view: "npm:^1.0.20"
+  checksum: d44c518479505e37ab5b8b4a5aef9130edd8745f8ba9ca291ff0d8358bc89b63da8c30434f35c097384e455702bfe4acbe8b82dfb8b860a971adcae084c5b2f7
   languageName: node
   linkType: hard
 
@@ -9634,35 +9651,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"slate-react@npm:^0.101.5":
-  version: 0.101.5
-  resolution: "slate-react@npm:0.101.5"
+"slate-react@npm:^0.83.0":
+  version: 0.83.2
+  resolution: "slate-react@npm:0.83.2"
   dependencies:
-    "@juggle/resize-observer": "npm:^3.4.0"
-    "@types/is-hotkey": "npm:^0.1.8"
-    "@types/lodash": "npm:^4.14.200"
-    direction: "npm:^1.0.4"
-    is-hotkey: "npm:^0.2.0"
+    "@types/is-hotkey": "npm:^0.1.1"
+    "@types/lodash": "npm:^4.14.149"
+    direction: "npm:^1.0.3"
+    is-hotkey: "npm:^0.1.6"
     is-plain-object: "npm:^5.0.0"
-    lodash: "npm:^4.17.21"
-    scroll-into-view-if-needed: "npm:^3.1.0"
-    tiny-invariant: "npm:1.3.1"
+    lodash: "npm:^4.17.4"
+    scroll-into-view-if-needed: "npm:^2.2.20"
+    tiny-invariant: "npm:1.0.6"
   peerDependencies:
-    react: ">=18.2.0"
-    react-dom: ">=18.2.0"
-    slate: ">=0.99.0"
-  checksum: 73d6eed64ed2924d7efe1a3ee61ad5ec565427c4e94ac1a6e95191fe47e9940214b7114f8f4a1b59270ac3305034e8a0d3e86375faf669c26938214063522f64
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+    slate: ">=0.65.3"
+  checksum: 622902c3b2f7acda423044fdb5558851bd694c36e9cb938223dcda7a220df99a03c381f26db0044cc6b885009a528f4f597290d1e00258c4368ab9ab73eb227f
   languageName: node
   linkType: hard
 
-"slate@npm:^0.101.5":
-  version: 0.101.5
-  resolution: "slate@npm:0.101.5"
+"slate@npm:^0.82.1":
+  version: 0.82.1
+  resolution: "slate@npm:0.82.1"
   dependencies:
-    immer: "npm:^10.0.3"
+    immer: "npm:^9.0.6"
     is-plain-object: "npm:^5.0.0"
     tiny-warning: "npm:^1.0.3"
-  checksum: 9848053673200998392ec783551bc512c73eeb9444f7318d06d28d50221bdbb2b60c21b7b16b5d1663e45632a6ddd902ea5f6518f5da589bdec7eb5b366dbcba
+  checksum: f0d64467c66f4399de147c16c6232ea4e4defea1f9ae0e0e6adedb910fa3af5005af94f1f852a68cefc3145651e1c1227dd455ca81b00b8681188fcba18216b6
   languageName: node
   linkType: hard
 
@@ -10177,10 +10193,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-invariant@npm:1.3.1":
-  version: 1.3.1
-  resolution: "tiny-invariant@npm:1.3.1"
-  checksum: 5b87c1d52847d9452b60d0dcb77011b459044e0361ca8253bfe7b43d6288106e12af926adb709a6fc28900e3864349b91dad9a4ac93c39aa15f360b26c2ff4db
+"tiny-invariant@npm:1.0.6":
+  version: 1.0.6
+  resolution: "tiny-invariant@npm:1.0.6"
+  checksum: 37ca64a84b71ff34545466dfb511d206f329a262d3dd1e3ac93db485c23e06c685670437e24c07cb06bba4cf1f75e44ae6cd8f2f30502556b33a71ef2762aeb5
   languageName: node
   linkType: hard
 

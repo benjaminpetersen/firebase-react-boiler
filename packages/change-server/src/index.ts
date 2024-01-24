@@ -48,13 +48,23 @@ app.ws("/notetaker-collaboration/:document", async (ws, req) => {
     return undefined;
   });
   if (persistedDoc) {
-    console.log("APPLY", persistedDoc);
     Y.applyUpdate(ydoc, persistedDoc);
   }
   // this needs to go after the setup for some reason. I suspect some timeout
 
   // console.log("SETUP?", persistedDoc);
-  ydoc.on("update", () => {
+  ydoc.on("update", (update) => {
+    const stateVector = Y.encodeStateVector(ydoc);
+    // don't have prev?
+    // console.log("PLS PLS PLS", Y.logUpdate(Y.encodeStateVectorFromUpdate()));
+    // console.log("args", ...args.map((t) => typeof t));
+
+    console.log("\n\n\nState:");
+    Y.logUpdate(Y.encodeStateAsUpdate(ydoc));
+    console.log("\n\n\nCHANGE:");
+    Y.logUpdate(update);
+
+    // console.log("DELTA", update);
     saveChanges(ydoc, docName);
   });
 });

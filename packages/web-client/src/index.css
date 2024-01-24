@@ -36,3 +36,12 @@ body {
   background-color: grey;
   border-radius: 5px;
 }
+
+.full-size {
+  width: "100%";
+  height: "100%";
+}
+
+.border {
+  border: "2px solid green";
+}
