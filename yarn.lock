@@ -570,6 +570,7 @@ __metadata:
     fast-xml-parser: "npm:^4.3.3"
     lodash-es: "npm:^4.17.21"
     markdown: "npm:^0.5.0"
+    marked: "npm:^11.1.1"
     postcss: "npm:^8.4.33"
     preact: "npm:^10.19.3"
     react: "npm:^18.2.0"
@@ -7806,6 +7807,15 @@ __metadata:
   bin:
     md2html: ./bin/md2html.js
   checksum: f9feeb2c3c4ad5a96399d2fe421c2d2cdc5862eaa89b1711864f3c819dc23d41765daae9566ecc38e19f46f3ddaea7a0f2e9e3fd044319554a686206e0de7052
+  languageName: node
+  linkType: hard
+
+"marked@npm:^11.1.1":
+  version: 11.1.1
+  resolution: "marked@npm:11.1.1"
+  bin:
+    marked: bin/marked.js
+  checksum: 77137491bb9610ceaa42a2f487ea00ec13836f19c3d41cabb80f16b283461a1d14285de42725c09d8a2fb029ae10633b07e76afc76113c8067e68eaedfdf8bf6
   languageName: node
   linkType: hard
 

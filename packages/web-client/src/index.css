@@ -45,3 +45,7 @@ body {
 .border {
   border: "2px solid green";
 }
+
+h1 {
+  font-size: 2em;
+}
