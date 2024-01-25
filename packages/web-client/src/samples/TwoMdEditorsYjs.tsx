@@ -3,6 +3,7 @@ import * as Y from "yjs";
 import { useEffect, useMemo, useState } from "react";
 
 import DiffMatchPatch from "diff-match-patch";
+import { getAndApplyDeltas, getDeltasFromMdContent } from "../editor/p2p";
 
 /**
  * TODO
@@ -50,25 +51,7 @@ const TwoMdEditorsYjs = () => {
   return (
     <div>
       <h1>demo on yjs</h1>
-      <Md
-        setValue={(v) => {
-          const dmp = new DiffMatchPatch();
-          //   -1 remove +1 add 0 mainain
-          const diffs: [number, string][] = dmp.diff_main(st1.toJSON(), v);
-          //   deltas {retain: num, delete: num, insert: "char"};
-          type Delta =
-            | { retain: number }
-            | { delete: number }
-            | { insert: string };
-          const deltas = diffs.flatMap(([type, string]): Delta[] => {
-            if (type === -1) return [{ delete: string.length }];
-            if (type === 0) return [{ retain: string.length }];
-            return [{ insert: string }];
-          });
-          st1.applyDelta(deltas);
-        }}
-        value={useYTxt(st1)}
-      />
+      <Md setValue={getAndApplyDeltas(st1)} value={useYTxt(st1)} />
       <Md setValue={() => {}} value={useYTxt(st2)} />
     </div>
   );
