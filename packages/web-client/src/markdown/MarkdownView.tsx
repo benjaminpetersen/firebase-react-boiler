@@ -1,4 +1,3 @@
-import { marked } from "marked";
 import { useEffect, useState } from "react";
 import { ParseRes } from "../xml/parse";
 import { XMLParser } from "fast-xml-parser";

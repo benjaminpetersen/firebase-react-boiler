@@ -2,12 +2,13 @@ import { useState } from "react";
 import { MarkdownView } from "./MarkdownView";
 import { MarkdownEditor } from "./MarkdownEditor";
 
-const Main = () => {
-  const [v, sV] = useState(localStorage.getItem("md") || "");
-  const setValue = (v: string) => {
-    localStorage.setItem("md", v);
-    sV(v);
-  };
+const Main = ({
+  value: v,
+  setValue,
+}: {
+  value: string;
+  setValue: (s: string) => void;
+}) => {
   return (
     <div
       style={{

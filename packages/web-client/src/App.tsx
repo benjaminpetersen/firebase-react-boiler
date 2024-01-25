@@ -5,9 +5,11 @@ import { ContextMenuProvider } from "./containers/ContextMenu";
 import Main from "./content-editable";
 import Md from "./markdown";
 const TwoEditorsSameBrowser = React.lazy(
-  () => import("./samples/TwoEditorsSameBrowser"),
+  () => import("./samples/TwoSlateEditorsSameBrowser"),
 );
+const TwoMdEditorsYjs = React.lazy(() => import("./samples/TwoMdEditorsYjs"));
 const App = () => {
+  if (Math.random()) return <TwoMdEditorsYjs />;
   if (Math.random()) return <Md />;
   if (Math.random()) return <Main />;
   if (Math.random())
