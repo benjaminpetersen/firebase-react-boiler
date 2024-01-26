@@ -90,9 +90,6 @@ export const useLiveConnection = (t: SharedType) => {
     };
     const unsub = listen((msg) => {
       const upd = decodeDocUpdate(msg);
-      Y.logUpdate(
-        new Uint8Array(upd.type === "doc-connect" ? upd.fullDoc : upd.data),
-      );
       if (!upd) {
         console.error("Failed to parse update", msg);
         return;

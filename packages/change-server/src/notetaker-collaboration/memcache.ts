@@ -4,7 +4,7 @@ import {
   uint8ToDocUpdateEvent,
 } from "@chewing-bytes/firebase-standards";
 import * as Y from "yjs";
-import { loadFile } from "../network/storage";
+import { loadFile, saveChanges } from "../network/storage";
 type RoomSubscription = (msg: string) => void;
 
 const docCache = new Map<string, Y.Doc>();
@@ -30,6 +30,7 @@ const _setupNewDoc = async (roomName: string) => {
   return doc;
 };
 
+// TODO stampede - store docCache as Promise<>
 export const getDoc = async (roomName: string) => {
   const doc = docCache.get(roomName) || (await _setupNewDoc(roomName));
   docCache.set(roomName, doc);
@@ -59,6 +60,9 @@ export const emitToRooms = async (
   const update = decodeDocUpdate(data);
   const d = update.type === "doc-connect" ? update.fullDoc : update.data;
   Y.applyUpdate(doc, new Uint8Array(d));
+  saveChanges(doc, roomName).catch((err) => {
+    console.log("Failing persistence", err);
+  });
   const state = Y.encodeStateVector(doc);
   const encodeUpdate = uint8ToDocUpdateEvent(roomName);
   for (const sub of subs) {

@@ -52,9 +52,7 @@ app.ws("/md-notetaker-collaboration", async (ws, req) => {
       // send the full current ydoc
       const ydoc = await getDoc(roomName);
       Y.applyUpdate(ydoc, new Uint8Array(update.fullDoc));
-      // ydoc.app
       const upd = Y.encodeStateAsUpdate(ydoc);
-      Y.logUpdate(upd);
       ws.send(JSON.stringify(uint8ToDocUpdateEvent(roomName)(upd)));
     }
   });
@@ -80,13 +78,8 @@ app.ws("/notetaker-collaboration/:document", async (ws, req) => {
   }
   // this needs to go after the setup for some reason. I suspect some timeout
 
-  // console.log("SETUP?", persistedDoc);
   ydoc.on("update", (update) => {
     const stateVector = Y.encodeStateVector(ydoc);
-    // don't have prev?
-    // console.log("PLS PLS PLS", Y.logUpdate(Y.encodeStateVectorFromUpdate()));
-    // console.log("args", ...args.map((t) => typeof t));
-
     console.log("\n\n\nState:");
     Y.logUpdate(Y.encodeStateAsUpdate(ydoc));
     console.log("\n\n\nCHANGE:");
