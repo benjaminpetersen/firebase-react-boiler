@@ -29,10 +29,18 @@ const preserveNewlines = (text: string): React.ReactNode[] => {
 
 const renderMarkdown = (markdown: string) => marked(markdown, { breaks: true });
 
-const RenderText = ({ text, key }: { text: string; key?: string }) => {
+const RenderText = ({
+  text: dangTheFates,
+  fragKey,
+}: {
+  text: string;
+  fragKey?: string;
+}) => {
+  // Bug workaround. The xml parser produces a number if it's parseable
+  const text = `${dangTheFates}`;
   return (
     // preserve newlines and run through md parser.
-    <React.Fragment key={key}>
+    <React.Fragment key={fragKey}>
       {preserveNewlines(text).map((v, i) =>
         typeof v === "string" ? (
           <span
@@ -58,11 +66,11 @@ export const renderXmlPart = (
 ): React.ReactNode[] | React.ReactNode => {
   // can we preserve the prev xml in the renderer?
   // how to get keys?
-  if (isTextNode(part)) return <RenderText {...part} key={"aah"} />;
+  if (isTextNode(part)) return <RenderText {...part} fragKey={"aah"} />;
   const [k] = Object.keys(part);
   if (!isRecognizedXmlTag(k)) {
     console.log("Raw render", part, { v: builder.build(part) });
-    return <RenderText text={builder.build(part)} key={"xml"} />;
+    return <RenderText text={builder.build(part)} fragKey={"xml"} />;
   }
   return part[k].map((node: XmlPart | XmlTextNode) => {
     const xml = !isTextNode(node) ? node : undefined;
@@ -70,7 +78,7 @@ export const renderXmlPart = (
       return isRecognizedXmlTag(k) ? (
         recognizedTags[k](node)
       ) : (
-        <RenderText {...node} key="xml" />
+        <RenderText {...node} fragKey="xml" />
       );
     } else if (xml) return renderXmlPart(xml);
   });
