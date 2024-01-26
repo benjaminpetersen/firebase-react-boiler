@@ -4,36 +4,19 @@ import * as Y from "yjs";
 import * as _ from "lodash";
 import {
   emitToRooms,
+  getDoc,
   subscribeToRoom,
 } from "./notetaker-collaboration/memcache";
+import { loadFile, saveChanges } from "./network/storage";
+import {
+  decodeDocUpdate,
+  uint8ToDocUpdateEvent,
+} from "@chewing-bytes/firebase-standards";
 const roomName = "bplocal";
 const express = require("express");
 const path = require("path");
 const app = express();
 const port = 8080;
-const { Storage } = require("@google-cloud/storage");
-const s: Storage = new Storage();
-const roomStashLocation = (room) => `room-documents/${room}`;
-const bucket = "notetaker-files";
-const saveFile = async (content: Uint8Array, roomName: string) => {
-  const fpath = roomStashLocation(roomName);
-  await s.bucket(bucket).file(fpath).save(Buffer.from(content));
-};
-
-const _saveChanges = async (ydoc: Y.Doc, room: string) => {
-  const update = Y.encodeStateAsUpdate(ydoc);
-  await saveFile(update, room);
-};
-
-// save every 10s?
-const saveChanges = _.throttle(_saveChanges, 10000);
-const loadFile = async (roomName: string) => {
-  const f = s.bucket(bucket).file(roomStashLocation(roomName));
-  if (await f.exists().then((d) => d[0])) {
-    const dl = await f.download();
-    return dl[0];
-  } else return undefined;
-};
 
 expWs(app);
 
@@ -45,6 +28,11 @@ app.use("/", express.static(path.join(__dirname, "../web-client-build")));
 let wsConnections = 0;
 let count = 0;
 app.ws("/md-notetaker-collaboration", async (ws, req) => {
+  /**
+   * 1. Client connects with it's current state
+   * 2. Connect to existing data (mem / load from file service) / send over the whole of the data
+   */
+  // create connection should also emit the doc state?
   wsConnections++;
   const seshId = wsConnections;
   console.log("Create Connection", roomName, seshId);
@@ -53,9 +41,22 @@ app.ws("/md-notetaker-collaboration", async (ws, req) => {
     ws.send(msg);
   };
   const unsub = subscribeToRoom(roomName, messageHandler);
-  ws.on("message", (msg: string) => {
-    console.log("Client msg in");
-    emitToRooms(roomName, msg, messageHandler);
+  ws.on("message", async (msg: string) => {
+    const update = decodeDocUpdate(msg);
+    if (update.type === "doc-update") {
+      //add a connect types
+      emitToRooms(roomName, msg, messageHandler).catch((e) => {
+        console.error("Failed to propagate message", e);
+      });
+    } else if (update.type === "doc-connect") {
+      // send the full current ydoc
+      const ydoc = await getDoc(roomName);
+      Y.applyUpdate(ydoc, new Uint8Array(update.fullDoc));
+      // ydoc.app
+      const upd = Y.encodeStateAsUpdate(ydoc);
+      Y.logUpdate(upd);
+      ws.send(JSON.stringify(uint8ToDocUpdateEvent(roomName)(upd)));
+    }
   });
   ws.on("close", () => {
     unsub();

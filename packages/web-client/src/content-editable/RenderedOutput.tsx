@@ -51,7 +51,6 @@ export const RenderedOutput = ({ text }: { text: string }) => {
       const jObj = parser.parse(withPost);
       // array?
       setRend(jObj);
-      console.log("PARSE RES", jObj);
     } catch (error) {
       console.error("PARSE ERR", error);
     }

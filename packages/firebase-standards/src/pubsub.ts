@@ -1,4 +1,16 @@
 import * as z from "zod";
+
+const strParse =
+  <P extends z.AnyZodObject>(objParse: P) =>
+  (s: string, logger?: (err: unknown) => void): z.infer<P> | undefined => {
+    try {
+      return objParse.parse(JSON.parse(s));
+    } catch (error) {
+      logger?.(error);
+      return undefined;
+    }
+  };
+
 const docUpdateEvent = z.object({
   type: z.literal("doc-update"),
   data: z.array(z.number()),
@@ -7,14 +19,7 @@ const docUpdateEvent = z.object({
   roomName: z.string(),
 });
 export type DocUpdateEvent = z.infer<typeof docUpdateEvent>;
-export const strToDocUpdate = (s: string) => {
-  try {
-    return docUpdateEvent.parse(JSON.parse(s));
-  } catch (error) {
-    console.error("Failed str to doc parse", s, error);
-    return undefined;
-  }
-};
+const strToDocUpdate = strParse(docUpdateEvent);
 export const uint8ToDocUpdateEvent =
   (roomName: string) =>
   (data: Uint8Array, serverState?: Uint8Array): DocUpdateEvent => ({
@@ -23,3 +28,26 @@ export const uint8ToDocUpdateEvent =
     data: Array.from(data),
     serverState: serverState ? Array.from(serverState) : undefined,
   });
+
+//
+const docConnectEvent = z.object({
+  type: z.literal("doc-connect"),
+  fullDoc: z.array(z.number()),
+  // Only the server sends it's state to clients.
+  roomName: z.string(),
+});
+export type DocConnectEvent = z.infer<typeof docConnectEvent>;
+const strToDocConnect = strParse(docConnectEvent);
+export const uint8ToDocConnect =
+  (roomName: string) =>
+  (data: Uint8Array): DocConnectEvent => ({
+    type: "doc-connect",
+    roomName,
+    fullDoc: Array.from(data),
+  });
+
+export const decodeDocUpdate = (
+  s: string,
+): DocConnectEvent | DocUpdateEvent | undefined => {
+  return strToDocUpdate(s) || strToDocConnect(s);
+};

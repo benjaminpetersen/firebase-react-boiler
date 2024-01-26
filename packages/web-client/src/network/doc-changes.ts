@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { SharedType } from "../editor/types";
 import { sleep } from "../utils";
 import {
-  strToDocUpdate,
+  decodeDocUpdate,
+  uint8ToDocConnect,
   uint8ToDocUpdateEvent,
 } from "@chewing-bytes/firebase-standards";
 import { roomName } from "../refactor";
@@ -69,29 +70,38 @@ const listen = (onMsg: (msg: string) => void) => {
   };
 };
 
+const send = async (d) => {
+  await isOpen;
+  getWs()?.send(JSON.stringify(d));
+};
+
 export const useLiveConnection = (t: SharedType) => {
   useEffect(() => {
     let serverState: Uint8Array | undefined;
+    // Connect - propagate state to server
+    send(uint8ToDocConnect(roomName)(Y.encodeStateAsUpdate(t.doc)));
     const onDocUpdate = async (update) => {
       await isOpen;
       const upd = serverState
         ? Y.encodeStateAsUpdate(t.doc, serverState)
         : update;
       // For some reason empty updates have 2 0's
-      if (upd.length > 2)
-        getWs().send(JSON.stringify(uint8ToDocUpdateEvent(roomName)(upd)));
+      if (upd.length > 2) send(uint8ToDocUpdateEvent(roomName)(upd));
     };
     const unsub = listen((msg) => {
-      console.log("WebSocket Client received", msg);
-      const upd = strToDocUpdate(msg);
+      const upd = decodeDocUpdate(msg);
+      Y.logUpdate(
+        new Uint8Array(upd.type === "doc-connect" ? upd.fullDoc : upd.data),
+      );
       if (!upd) {
         console.error("Failed to parse update", msg);
         return;
       }
-      if (upd.serverState) serverState = new Uint8Array(upd.serverState);
-      // it may well be worth changing this goofy encoding.
-      console.log("applyUpdate", new Uint8Array(upd.data));
-      Y.applyUpdate(t.doc, new Uint8Array(upd.data));
+      if (upd.type === "doc-update") {
+        if (upd.serverState) serverState = new Uint8Array(upd.serverState);
+        // it may well be worth changing this goofy encoding.
+        Y.applyUpdate(t.doc, new Uint8Array(upd.data));
+      }
     });
     t.doc.on("update", onDocUpdate);
     return () => {
