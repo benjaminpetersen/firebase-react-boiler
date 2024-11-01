@@ -12,6 +12,7 @@ import {
   decodeDocUpdate,
   uint8ToDocUpdateEvent,
 } from "@chewing-bytes/firebase-standards";
+import { newDocUserContext } from "./notetaker-collaboration/context";
 const roomName = "bplocal";
 const express = require("express");
 const path = require("path");
@@ -25,19 +26,17 @@ app.use("/", express.static(path.join(__dirname, "../web-client-build")));
  * TODO - Gcloud tutorial about websockets on cloud run gives an example of using redis for this to work at scale.
  * Currently when a second instance get's created we may not connect to the same instance.
  */
-let wsConnections = 0;
-let count = 0;
 app.ws("/md-notetaker-collaboration", async (ws, req) => {
   /**
    * 1. Client connects with it's current state
    * 2. Connect to existing data (mem / load from file service) / send over the whole of the data
    */
   // create connection should also emit the doc state?
-  wsConnections++;
-  const seshId = wsConnections;
-  console.log("Create Connection", roomName, seshId);
+  const docUserContext = newDocUserContext(roomName);
+  const { sessionId } = docUserContext;
+  console.log("Create Connection", roomName, sessionId);
   const messageHandler = (msg: string) => {
-    console.log("Passing message", { Id: seshId }, count++);
+    console.log("Passing message", { Id: sessionId }, docUserContext.updates++);
     ws.send(msg);
   };
   const unsub = subscribeToRoom(roomName, messageHandler);
@@ -58,7 +57,7 @@ app.ws("/md-notetaker-collaboration", async (ws, req) => {
   });
   ws.on("close", () => {
     unsub();
-    console.log(`Close Connection`, roomName, seshId);
+    console.log(`Close Connection`, roomName, sessionId);
   });
 });
 

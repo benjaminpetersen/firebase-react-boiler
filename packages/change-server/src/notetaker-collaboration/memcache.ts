@@ -5,9 +5,10 @@ import {
 } from "@chewing-bytes/firebase-standards";
 import * as Y from "yjs";
 import { loadFile, saveChanges } from "../network/storage";
+import { saveUpdate } from "../network";
 type RoomSubscription = (msg: string) => void;
 
-const docCache = new Map<string, Y.Doc>();
+const docCache = new Map<string, Promise<Y.Doc>>();
 const cache = new Map<string, RoomSubscription[]>();
 
 const setArr = <T>(arr: T[], newArr: T[]) => {
@@ -27,14 +28,22 @@ const _setupNewDoc = async (roomName: string) => {
   });
   const doc = new Y.Doc();
   if (persistedData) Y.applyUpdate(doc, persistedData);
+  doc.on("update", async (update) => {
+    saveChanges(doc, roomName).catch((e) => {
+      console.log("Couldn't persist doc", roomName, e);
+    });
+    saveUpdate({ roomName, update }).catch((e) => {
+      console.log("Couldnt persist history", roomName, e);
+    });
+  });
   return doc;
 };
 
 // TODO stampede - store docCache as Promise<>
 export const getDoc = async (roomName: string) => {
-  const doc = docCache.get(roomName) || (await _setupNewDoc(roomName));
-  docCache.set(roomName, doc);
-  return doc;
+  const docPr = docCache.get(roomName) || _setupNewDoc(roomName);
+  docCache.set(roomName, docPr);
+  return await docPr;
 };
 
 export const subscribeToRoom = (roomName: string, sub: RoomSubscription) => {
@@ -60,9 +69,6 @@ export const emitToRooms = async (
   const update = decodeDocUpdate(data);
   const d = update.type === "doc-connect" ? update.fullDoc : update.data;
   Y.applyUpdate(doc, new Uint8Array(d));
-  saveChanges(doc, roomName).catch((err) => {
-    console.log("Failing persistence", err);
-  });
   const state = Y.encodeStateVector(doc);
   const encodeUpdate = uint8ToDocUpdateEvent(roomName);
   for (const sub of subs) {
