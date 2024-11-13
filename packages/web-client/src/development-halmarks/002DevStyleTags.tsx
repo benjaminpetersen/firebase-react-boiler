@@ -22,14 +22,6 @@ type StagParams = {
 };
 
 // Needs the tab depth of the current line before finding tab groups bellow
-const styleTagRe = /# Style/;
-const getNumTabsBySelection = (selection: number) => ``;
-const getTabChildren = (nt: string, index: number) => {
-  const tabsOf = new RegExp(`(\t${numTabs + 1}.*\n)*`);
-};
-const getStagParams = (): StagParams[] => {
-  return [];
-};
 
 // Need some concept of a parser - ideally streaming content... So it's pretty easy to just scan forwards or backwords for children or parents. build an internal model and expose it somehow. That's a big deal rn
 // Parser needs to identify headers, tabChildren, tabParentChain, tabSibblings
@@ -66,8 +58,27 @@ const newPrParts = (): [PromiseResRej<LineDetailsO>, Promise<LineDetailsO>] => {
 
 type LineDetailsO = LineDetails | null;
 
+type StagBreak = {
+  styleTagName: string; // <style-bold> = bold;
+  type: "open" | "close"; // <style-bold> = open;
+};
+
+type StagContent = {
+  text: string;
+};
+
+type StagNode = StagBreak | StagContent;
+
+const hashRe = /^\s*#* /;
+const styleTagRe = /<\/?style-(\w*-*)*>/g;
+
 class LineDetails {
   input: string;
+  // 0 indicates normal text - 1,2,3,4, are <h1>...<h6> - denoted in app domain as # for h1, and ## for h2 at the start of a line.
+  // 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  header: number;
+  // need a style tag start stop indicator - keep a list of indices at which we need to apply or remove a class?
+  stagNodes: StagNode[] = [];
   leadingTabCount: number;
   prev: Promise<LineDetailsO>;
   next: Promise<LineDetailsO>;
@@ -82,8 +93,34 @@ class LineDetails {
   constructor(input: string) {
     this.input = input;
     this.leadingTabCount = leadingTabCount(input);
+    this.header = (hashRe.exec(input || "")?.[0]?.length || 1) - 1;
+    const styleTags = [...input.matchAll(styleTagRe)];
 
-    //
+    this.stagNodes = styleTags.flatMap((match, i, arr) => {
+      const prevMatch = arr[i - 1];
+      const prevMatchEndIndex = prevMatch
+        ? prevMatch.index + prevMatch[0].length
+        : 0;
+      const res: StagNode[] = [
+        { text: input.slice(prevMatchEndIndex, match.index) },
+        {
+          styleTagName: match[1],
+          type: match[0].startsWith("</") ? "close" : "open",
+        },
+      ];
+      return res;
+    });
+    const lastStyleTag = styleTags[styleTags.length - 1];
+    this.stagNodes.push({
+      text: input.slice(
+        lastStyleTag ? lastStyleTag.index + lastStyleTag[0].length : 0,
+      ),
+    });
+    if (this.header) {
+      const styleTagName = `heading${this.header}`;
+      this.stagNodes.unshift({ styleTagName, type: "open" });
+      this.stagNodes.push({ styleTagName, type: "close" });
+    }
     const [prevResRej, prev] = newPrParts();
     const [nextResRej, next] = newPrParts();
     const [parentTabLineResRej, parentTabLine] = newPrParts();
@@ -137,20 +174,19 @@ const parentArray = async (lineDetails: LineDetails) => {
   }
   return res;
 };
+
 const displayParser = async (lineDetails: LineDetails[]) => {
   const shouldHideDetails = await Promise.all(
     lineDetails.map(async (ld) => {
       const parents = await parentArray(ld);
       return {
-        hide: parents.find((p) => p.input.includes("# Style")),
+        hide: parents.find((p) => p.input.startsWith("# Style")),
         lineDetails: ld,
       };
     }),
   );
 
-  return shouldHideDetails
-    .filter((d) => !d.hide)
-    .flatMap((d) => [d.lineDetails.input.replace("\n", ""), <br />]);
+  return shouldHideDetails.filter((d) => !d.hide).map((d) => d.lineDetails);
 };
 
 export const StyleTags = () => {
@@ -158,13 +194,32 @@ export const StyleTags = () => {
   useEffect(() => {
     addEventListener("paste", ref.current);
   });
-  const [rend, setRend] = useState<React.ReactNode[]>([]);
   useEffect(() => {
-    displayParser(parseLines(stagString)).then(setRend);
+    displayParser(parseLines(stagString)).then((lineDetails) => {
+      const el = ref.current as HTMLElement;
+      if (el.innerHTML) return;
+      const classNamesRecord: Record<string, boolean> = {};
+      console.log(lineDetails);
+      const stagDomNodes = lineDetails.flatMap((ld) => {
+        const nodes = ld.stagNodes.flatMap((n) => {
+          if ("text" in n) {
+            const spanNode = document.createElement("span");
+            spanNode.classList.add(
+              ...Object.keys(classNamesRecord).filter(
+                (k) => typeof k === "string" && classNamesRecord[k],
+              ),
+            );
+            spanNode.innerText = n.text;
+            return [spanNode];
+          } else {
+            classNamesRecord[n.styleTagName] = n.type === "open";
+            return [];
+          }
+        });
+        return [...nodes, document.createElement("br")];
+      });
+      stagDomNodes.forEach((n) => el.appendChild(n));
+    });
   }, []);
-  return (
-    <div contentEditable ref={ref}>
-      {rend}
-    </div>
-  );
+  return <div contentEditable ref={ref} />;
 };
