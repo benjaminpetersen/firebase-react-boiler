@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import "./App.css";
-import { StyleTags } from "./development-halmarks/002DevStyleTags";
+import { Comp } from "./development-halmarks/003DevInis";
 
 const App = () => {
   return (
     <Suspense fallback={<div>loading...</div>}>
-      <StyleTags />
+      <Comp />
     </Suspense>
   );
 };

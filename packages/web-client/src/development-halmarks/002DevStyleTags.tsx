@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import * as z from "zod";
 
+/**
+ * Out of this I still have a lot to do
+ * - Write it better
+ * - Have block tags on each line details
+ * - Close off all the styles at the end of each block and open them again?
+ */
+
 export const stagString = `# Styles
 \t.bold
 \t\tfont-weight: bold;
