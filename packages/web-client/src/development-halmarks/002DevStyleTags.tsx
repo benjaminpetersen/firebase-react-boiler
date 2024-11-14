@@ -1,11 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import * as z from "zod";
 
 export const stagString = `# Styles
 \t.bold
 \t\tfont-weight: bold;
 \t.italics
-\t\tfont-style: italics;
-
+\t\tfont-style: italic;
+\t.heading1
+\t\tfont-size: 20px;
+\t\tfont-weight: bold;
 # First feature: stag (style tags)
 
 I want to load this document and see this as <style-bold>bold</style-bold> and <style-italics>italics</style-italics> with the tags hidden to the eye.
@@ -189,13 +192,160 @@ const displayParser = async (lineDetails: LineDetails[]) => {
   return shouldHideDetails.filter((d) => !d.hide).map((d) => d.lineDetails);
 };
 
+// basically have a zod validator that can ensure each param goes with it's associated values.
+// all colors will be hex coded
+// line-decoration: "none" |
+const hexColorRe = /#[0-9a-fA-F]{6}/;
+const pxRe = /\d+px/;
+type StyleRe = {
+  re: RegExp;
+  uiFeedbackDescription: string;
+};
+const hexColorStyle: StyleRe = {
+  re: hexColorRe,
+  uiFeedbackDescription:
+    "Examples of a hex pattern are #FFFFFF for white. There must be a hash tag followed by 6 characters that can be numbers or A-F",
+};
+const pxStyle: StyleRe = {
+  re: pxRe,
+  uiFeedbackDescription:
+    "Pixel values must be in the form of numbers followed by px. For example 16px.",
+};
+// A subset of css styles
+
+const zodRe = ({ re, uiFeedbackDescription }: StyleRe) =>
+  z
+    .string()
+    .refine((str) => !!re.exec(str), { message: uiFeedbackDescription })
+    .transform((str) => re.exec(str)[0]);
+
+const stylesValidator = z
+  .object({
+    ["text-decoration"]: z.literal("none").or(z.literal("underline")),
+    ["font-weight"]: z.literal("normal").or(z.literal("bold")),
+    ["font-style"]: z.literal("normal").or(z.literal("italic")),
+    ["background-color"]: z.literal("transparent").or(zodRe(hexColorStyle)),
+    ["color"]: zodRe(hexColorStyle),
+    ["font-size"]: zodRe(pxStyle),
+  } as const)
+  .partial();
+
+type StagStyle = z.TypeOf<typeof stylesValidator>;
+
+type StyleFromLines = {
+  cssSelector: string;
+  style: StagStyle;
+};
+
+type StyleKV = { key: string; val: string } | { error: string };
+
+const parseStyleKv = (line: LineDetails): StyleKV => {
+  const keyRe = /^\t\t((\w*-*)*)/;
+  const valRe = /: ((\w*-*)*)/;
+  const key = keyRe.exec(line.input)?.[1];
+  const val = valRe.exec(line.input)?.[1];
+  return key && val
+    ? { key, val }
+    : {
+        error: !key
+          ? "no key found"
+          : !val
+            ? "no val found"
+            : "no key or val found",
+      };
+};
+
+const isDev = true;
+const devLogger = (goal: string, ...args: any[]) => {
+  if (isDev) console.log(`[${goal}]`, ...args);
+};
+
+const selectorRe = /\t(\.[\w-]*)/;
+// this is harrible;
+const parseStyleFromLines = (lineDetails: LineDetails[]) => {
+  const feedback: string[] = [];
+  let selector: string | null = null;
+  //
+  const styleTagIndex = lineDetails.findIndex((v) =>
+    v.input.startsWith("# Style"),
+  );
+  const endStyleIndex = lineDetails.findIndex(
+    (v, i) => i > styleTagIndex && !v.input.startsWith("\t"),
+  );
+  devLogger("find style tag", styleTagIndex, endStyleIndex);
+  const styleLines = lineDetails.slice(styleTagIndex, endStyleIndex);
+  return styleLines.reduce(
+    (agg, el) => {
+      const isSelector = selectorRe.exec(el.input);
+      devLogger("working-selectorRe", isSelector, el);
+      if (isSelector) {
+        selector = isSelector[1];
+        return { ...agg, [selector]: {} };
+      }
+      if (!selector) return agg;
+      const kvE = parseStyleKv(el);
+      devLogger("style-kv-parse", kvE);
+      if ("error" in kvE) {
+        devLogger("style-kv-parse", kvE.error);
+        feedback.push(`line "${el.input}" failed to parse key value pair`);
+        return agg;
+      }
+      const isValid = stylesValidator.safeParse({ [kvE.key]: kvE.val });
+      devLogger("zod-kv-parse", isValid);
+      if (isValid.success) {
+        devLogger("agg-result", {
+          ...agg,
+          [selector]: { ...agg[selector], ...isValid.data },
+        });
+        return { ...agg, [selector]: { ...agg[selector], ...isValid.data } };
+      } else if (isValid.error) feedback.push(isValid.error.message);
+      return agg;
+    },
+    {} as Record<string, StagStyle>,
+  );
+  // First 1 tab depth and a string - that's the in doc selector
+  // Second 2 tab depth is key value pair - need to be parsed as per above
+  // any failure should abort the process with an error message
+};
+
+const injectStyle = (
+  documentSelector: string,
+  style: ReturnType<typeof parseStyleFromLines>,
+) => {
+  const styleTag = document.createElement("style");
+  document.head.appendChild(styleTag);
+  const txt = Object.entries(style)
+    .map(([k, v]) => {
+      return `${documentSelector} ${k} {
+    ${Object.entries(v)
+      .map(([param, value]) => {
+        return `${param}: ${value};`;
+      })
+      .join("\n")}\n}`;
+    })
+    .join("\n\n");
+  styleTag.innerText = txt;
+  console.log("Genned style tag", txt);
+  //
+};
+
 export const StyleTags = () => {
   const ref = useRef();
+  const docCLass = "ddocc";
   useEffect(() => {
     addEventListener("paste", ref.current);
   });
   useEffect(() => {
-    displayParser(parseLines(stagString)).then((lineDetails) => {
+    const allLineDetails = parseLines(stagString);
+    try {
+      console.log("TRY TO PARSE!!");
+      const style = parseStyleFromLines(allLineDetails);
+      injectStyle(`.${docCLass}`, style);
+      console.log("pares result", style);
+    } catch (error) {
+      console.error(error);
+    }
+    displayParser(allLineDetails).then((lineDetails) => {
       const el = ref.current as HTMLElement;
       if (el.innerHTML) return;
       const classNamesRecord: Record<string, boolean> = {};
@@ -221,5 +371,5 @@ export const StyleTags = () => {
       stagDomNodes.forEach((n) => el.appendChild(n));
     });
   }, []);
-  return <div contentEditable ref={ref} />;
+  return <div contentEditable ref={ref} className={docCLass} />;
 };
