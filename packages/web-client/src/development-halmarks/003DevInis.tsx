@@ -1,15 +1,20 @@
 import { useEffect, useRef } from "react";
 
+import * as z from "zod";
+
 const testString = `# Style
 \t.bold:
 \t\tfont-weight: bold;
 # Initiatives
 \tRegex
 \t\tstart: /!sms (\\d{10})/
-\t\tcall: HTTP POST http://localhost:3001/test
-\t\tbody: "{\\"phoneNumber\\": \\"$1\\", \\"keywatever2\\": \\"could be constant strings 2?\\"}"
+\t\tcall: HTTPS POST http://localhost:3001/test
+\t\tbody:
+\t\t\tphoneNumber: "$1"
+\t\t\tkeywatever2: "could be constant strings"
 \t\tdescription: "GACK"
 \t\texample: "!sms 5555555555"
+\t\tsomekinda-ai-prompting-helpers: "send text","notify users...","ect?"
 \tBot
 \t\tsomebot that responds? meeeh
 # The goal
@@ -89,6 +94,34 @@ const iter =
     return { lastFindIndex, firstFindIndex };
   };
 
+const inisCallValidator = z.object({
+  type: z.literal("HTTP"),
+  method: z.literal("POST"),
+  url: z.string().url(),
+  body: z.record(z.string()),
+}); // could be anything - like include palette commands here.
+
+type InisCall = z.TypeOf<typeof inisCallValidator>;
+
+type Inis = {
+  regex: RegExp;
+  call: string;
+};
+
+const parseInis = (inisLines: sring[]) => {
+  const search = iter(inisLines);
+  // pull out the regex or whatever it is, execute on the doc and come up with a way to execute the call command?
+  // uselessparsers
+  const actions = search({
+    direction: "forward",
+    isMatch: (c, o) => c.tabs === 1,
+    startIndex: 0,
+    firstOrLast: "first",
+    shouldTerminateSearch: (c) => c.tabs === 0,
+  });
+  // chunk the actions into a list of regular structure
+};
+
 export const Comp = () => {
   const ref = useRef();
   useEffect(() => {
@@ -124,8 +157,11 @@ export const Comp = () => {
       });
   });
   return (
-    <div contentEditable ref={ref}>
-      some start
-    </div>
+    <>
+      <div contentEditable ref={ref}>
+        some start
+      </div>
+      <div>actions render:</div>
+    </>
   );
 };
