@@ -14,7 +14,7 @@
     "check": "tsc --noEmit"
   },
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "main": "lib/src/index.js",
   "dependencies": {

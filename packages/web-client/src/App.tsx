@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import "./App.css";
-import { Comp } from "./development-halmarks/003DevInis";
+import { Dev } from "./development-halmarks/006DevLearnUpdatesFromQuill";
 
 const App = () => {
   return (
     <Suspense fallback={<div>loading...</div>}>
-      <Comp />
+      <Dev />
     </Suspense>
   );
 };

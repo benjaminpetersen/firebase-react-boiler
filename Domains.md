@@ -1,10 +1,34 @@
-# Intro
+# Introduction
 
-Sort of a feature list with in app names and descriptions for development. This material will be written many times, it's important to keep it brief and distinct from other words.
+## Data Model:
+
+### Format:
+
+The data model consists of 3 parts that map from 1-2, 2-3.
+
+    1. ntRawFile: Each document consists of an ntRawFile, which is simple text file that includes pseudo xml. It's pseudo because the opening and closing tags can overlap one another. YJS will store edits to this.
+    2. ntObjectModel: The ntRawFile then gets mapped into the ntObjectModel, which has ntTextNodes interspersed with objects that represent the xml tags. Things like bold open, bold close, picture list.
+    3. HTML: DOM specific decisions will need to be made
+
+### Editing:
+
+All user edits happen from the DOM form. Presumeably edits will be: 1. Inserts 2. Deletes 3. Enclosures (wrapping something in a new tag) 4. De-enclosures (removing a tag)
+
+I think in order to simplify there will be a step following edits called normalization - where we delete any empty tags that have no effect if they're empty.
+
+This gives us the opportunity to insert and delete and really only worry about text nodes. The mapping should be quite simple
+
+3 and 4 are much more complicated: 3. Enclosures - If the tag is open, omit the open tag, scan for the close tag, delete it,
+
+## Domain Modelling
+
+### Introduction
+
+Sort of a feature list with in app names and descriptions for development. These words will show up in code alot, it's important to keep the words short, quickly recognizable, and distinct from other business words and coding concepts/words.
 
 nt - the app shorthand. Short for note taker. Use in place of a company name because those change.
 
-## Feature list
+### Feature list
 
 1. inis (short for initiatives) - simple regex in a document that populate a list of actions on the side. You could write remind me in 10 minutes, and it would trigger a button that requires confirmation before setting a reminder. I think there'll be a limit for a match of 100 chars either side of changes. and only scan on change?
 2. rs (short for Rollback Stack) - a history of all changes made and annotations of which user made them
