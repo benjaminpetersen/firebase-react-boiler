@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { PlainView } from "./PlainView";
-import { RenderedOutput } from "./RenderedOutput";
+import { DualView } from "./DualView";
 
 const Main = () => {
   const [v, sV] = useState(localStorage.getItem("k") || "");
@@ -8,19 +7,7 @@ const Main = () => {
     localStorage.setItem("k", v);
     sV(v);
   };
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexFlow: "row no-wrap",
-        justifyContent: "space-evenly",
-      }}
-      className="full-size"
-    >
-      <PlainView value={v} onChange={(_, v) => setValue(v)} />
-      <RenderedOutput text={v} />
-    </div>
-  );
+  return <DualView />;
 };
 
 export default Main;

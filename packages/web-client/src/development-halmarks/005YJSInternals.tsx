@@ -6,11 +6,11 @@ const setWindow = (key: string, el: any) => {
 };
 
 // The goal is to explore what 2 clients sharing data looks like and what the data model looks like. I want to know how sync
-const d = new Y.Doc();
-const type = d.get("wat", Y.Text);
+// const d = new Y.Doc();
+// const type = d.get("wat", Y.Text);
 // type.toDelta()
-type.insert(0, "abc");
-type.insert(1, "-1thpos-");
+// type.insert(0, "abc");
+// type.insert(1, "-1thpos-");
 
 // LURN
 // const sv = Y.encodeStateVector(d);
@@ -18,12 +18,12 @@ type.insert(1, "-1thpos-");
 // console.log("LOGGER", logme);
 // logs Map { clientID => clientsClock }
 
-const updateWIre = Y.encodeStateAsUpdate(d);
-const update = Y.decodeUpdate(updateWIre);
+// const updateWIre = Y.encodeStateAsUpdate(d);
+// const update = Y.decodeUpdate(updateWIre);
 
 // A snapshot is the ids and clocks. Seems identical to the state vector to me? no info on doc content, but can be applied with a Doc to get to a previous state.
 
-console.log("update", update);
+// console.log("update", update);
 // {structs: _Item[], ds: DeleteSet[] }
 // _Item has linked list info (parent: null, or YDoc), and origin, rightOrigin, and clock all seem to be used together to makeup the reconstruction
 //// parent - Doc or probably some other AbstractType
@@ -48,7 +48,7 @@ const doc1 = new Y.Doc();
 const txt1 = doc1.getText("test");
 const doc2 = new Y.Doc();
 const txt2 = doc2.getText("test");
-txt1.observe((event) => {
+txt1.observe((events) => {
   // console.log(event);
   // setWindow("ev", event);
   // txt2.applyDelta(event.delta);
